@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         const resp = await fetch('https://api.fonnte.com/send', {
             method: 'POST',
             headers: {
-                Authorization: CONFIG.FONNTE_TOKEN,
+                Authorization: 9gPdWFLM1zZx5BD8qiit,
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: new URLSearchParams({ target: to, message: text })
