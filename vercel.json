@@ -1,7 +1,7 @@
 {
   "rewrites": [
     { "source": "/", "destination": "user.html" },
-    { "source": "/login", "destination": /user.html" },
+    { "source": "/login", "destination": "user.html" },
     { "source": "/daftar", "destination": "user.html" },
     { "source": "/dashboard", "destination": "user.html" },
     { "source": "/toko", "destination": "user.html" },
