@@ -387,3 +387,37 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 
 .user-search-result { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; cursor: pointer; }
 .user-search-result:hover { background: rgba(255,255,255,0.03); }
+
+/* ============ ANIMASI KLIK TOMBOL (biar ga polos) ============ */
+.btn-primary, .btn-outline, .btn-danger, .nav-item, .nav-btn, .cat-chip,
+.game-tile, .seller-tab-btn, .auth-tab-btn, .product-card, .chat-list-item,
+.user-search-result, .faq-chip {
+    transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+}
+.btn-primary:active, .btn-outline:active, .btn-danger:active, .nav-btn:active,
+.cat-chip:active, .game-tile:active, .seller-tab-btn:active, .auth-tab-btn:active,
+.faq-chip:active {
+    transform: scale(0.94);
+    filter: brightness(0.9);
+}
+.product-card:active, .chat-list-item:active, .user-search-result:active {
+    transform: scale(0.98);
+}
+.nav-item.center-btn:active {
+    transform: translateY(0) scale(0.9);
+}
+
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    transform: scale(0);
+    animation: rippleAnim 0.6s ease-out;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes rippleAnim {
+    to { transform: scale(3); opacity: 0; }
+}
