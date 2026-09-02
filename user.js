@@ -27,8 +27,32 @@ async function kirimNotifikasiWA(to, text) {
     }
 }
 
+// Catat aktivitas ke tabel activity_log, biar bisa dilihat lewat .history di bot WA
+async function catatAktivitas(tipe, deskripsi) {
+    try {
+        await supabase.from('activity_log').insert([{ tipe, deskripsi }]);
+    } catch (err) {
+        console.error('Gagal catat aktivitas:', err);
+    }
+}
+
 let currentLang = localStorage.getItem('appLang') || 'id';
 let sesiUser = JSON.parse(localStorage.getItem('sesiUser') || 'null');
+
+// ================= ANIMASI KLIK (RIPPLE) =================
+document.addEventListener('click', (e) => {
+    const target = e.target.closest('.btn-primary, .btn-outline, .btn-danger, .nav-btn, .nav-item, .cat-chip, .game-tile, .seller-tab-btn, .auth-tab-btn, .faq-chip');
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple-effect';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    target.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+});
 
 let daftarProduk = [];
 let daftarKategori = ['Semua'];
@@ -82,6 +106,7 @@ document.getElementById('formRegister')?.addEventListener('submit', async (e) =>
     localStorage.setItem('sesiUser', JSON.stringify(sesiUser));
     Swal.fire({ icon: 'success', title: 'Pendaftaran Berhasil!', timer: 1000, showConfirmButton: false });
     kirimNotifikasiWA(NOMOR_ADMIN_WA, `*👤 USER BARU DAFTAR*\n\nNama: *${nama}*\nWA: ${noWa}`);
+    catatAktivitas('daftar', `${nama} (${noWa}) baru daftar`);
     masukKeApp();
 });
 
@@ -105,6 +130,7 @@ document.getElementById('formLogin')?.addEventListener('submit', async (e) => {
     sesiUser = data[0];
     localStorage.setItem('sesiUser', JSON.stringify(sesiUser));
     kirimNotifikasiWA(NOMOR_ADMIN_WA, `*🔑 USER LOGIN*\n\nNama: *${sesiUser.nama}*\nWA: ${sesiUser.no_wa}`);
+    catatAktivitas('login', `${sesiUser.nama} (${sesiUser.no_wa}) login`);
     masukKeApp();
 });
 
@@ -254,6 +280,7 @@ document.getElementById('formAjukanSeller')?.addEventListener('submit', async (e
     document.getElementById('ajukanSellerModal').style.display = 'none';
     Swal.fire({ icon: 'success', title: 'Pengajuan Terkirim', text: 'Admin akan meninjau pengajuan kamu.' });
     kirimNotifikasiWA(NOMOR_ADMIN_WA, `*🏪 PENGAJUAN SELLER BARU*\n\nNama: *${nama}*\nAsal: ${asal}\nUmur: ${umur}\nWA: ${sesiUser.no_wa}\nNo. DANA: ${nomorDana}\n\n_Tinjau di panel admin._`);
+    catatAktivitas('ajukan_seller', `${nama} (${sesiUser.no_wa}) ngajuin jadi seller`);
     renderProfile();
 });
 
@@ -895,6 +922,7 @@ document.getElementById('formCheckout')?.addEventListener('submit', async (e) =>
         `_Segera hubungi customer untuk konfirmasi pembayaran DANA & pengiriman akun._`;
 
     kirimNotifikasiWA(NOMOR_ADMIN_WA, pesanWA);
+    catatAktivitas('checkout', `${sesiUser.nama} (${sesiUser.no_wa}) checkout senilai ${formatRupiah(totalSemua)}`);
 
     if (checkoutMode === 'cart') { cart = []; simpanCart(); }
 
@@ -1033,6 +1061,7 @@ document.getElementById('formTambahProduk')?.addEventListener('submit', async (e
     }
     Swal.fire({ icon: 'success', title: 'Produk Ditambahkan', timer: 1000, showConfirmButton: false });
     kirimNotifikasiWA(NOMOR_ADMIN_WA, `*📦 PRODUK BARU DITAMBAHKAN*\n\nSeller: *${sesiUser.nama}*\nProduk: ${nama}\nKategori: ${kategori}\nHarga: ${formatRupiah(harga)}\nStok: ${stok}`);
+    catatAktivitas('produk_baru', `${sesiUser.nama} nambahin produk "${nama}"`);
     document.getElementById('formTambahProduk').reset();
     loadProdukSaya();
     loadProduk();
@@ -1337,6 +1366,7 @@ document.getElementById('formKirimChat')?.addEventListener('submit', async (e) =
         return;
     }
     kirimNotifikasiWA(NOMOR_ADMIN_WA, `*💬 CHAT BARU*\n\nDari: *${sesiUser.nama}*\nKe: ${chatLawanBicara.nama}\nPesan: ${pesan}`);
+    catatAktivitas('chat', `${sesiUser.nama} chat ke ${chatLawanBicara.nama}: "${pesan}"`);
     input.value = '';
     renderThreadMessages();
 });
