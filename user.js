@@ -1,16 +1,14 @@
 import { supabase } from '/config/supabase.js';
 
 // ================= KONFIGURASI TOKO =================
-const NAMA_TOKO = "Rama Store";
+const NAMA_TOKO = "Zean Store";
 const TAGLINE_TOKO = "Belanja gampang, proses cepat";
-const NOMOR_ADMIN_WA = "6283872851796"; // Ganti nomor WA admin di sini
+const NOMOR_ADMIN_WA = "6283872851796";
 
 // Pembayaran cuma DANA
-const NOMOR_DANA = "6283872851796"; // Ganti nomor DANA tujuan pembayaran
-const NAMA_PEMILIK_DANA = "Nama Pemilik DANA"; // Ganti nama pemilik akun DANA
+const NOMOR_DANA = "6283872851796";
+const NAMA_PEMILIK_DANA = "DANA";
 
-// Kirim WA lewat perantara /api/kirim-wa (bukan langsung ke Wasender),
-// karena Wasender ga bisa dipanggil langsung dari browser (CORS).
 async function kirimNotifikasiWA(to, text) {
     try {
         const resp = await fetch('/api/kirim-wa', {
@@ -27,7 +25,7 @@ async function kirimNotifikasiWA(to, text) {
     }
 }
 
-// Catat aktivitas ke tabel activity_log, biar bisa dilihat lewat .history di bot WA
+//fungsi history
 async function catatAktivitas(tipe, deskripsi) {
     try {
         await supabase.from('activity_log').insert([{ tipe, deskripsi }]);
